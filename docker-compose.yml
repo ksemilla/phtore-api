@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: local.Dockerfile
+    command: >
+      sh -c "pip3 install -r requirements/base.txt &&
+      uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+    ports:
+      - 8000:8000
+    environment:
+      - MONGO_URI=mongodb://phtore:phtore@db:27017
+      - DB_NAME=phtore
+    volumes:
+      - .:/app
+
+  db:
+    image: mongo
+    restart: always
+    volumes:
+      - phtore-db:/data/db
+    command: mongod --quiet --logpath /dev/null 
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: phtore
+      MONGO_INITDB_ROOT_PASSWORD: phtore
+
+volumes:
+  phtore-db:
