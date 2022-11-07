@@ -13,6 +13,7 @@ services:
     environment:
       - MONGO_URI=mongodb://phtore:phtore@db:27017
       - DB_NAME=phtore
+      - APP_KEY=phtore
     volumes:
       - .:/app
 

@@ -8,6 +8,10 @@ from .users import (
     delete_user
 )
 
+from .auth import (
+    login
+)
+
 Query = create_type(
     'Query',
     [
@@ -16,5 +20,7 @@ Query = create_type(
         update_user,
         create_user,
         delete_user,
+
+        login,
     ]
 )

@@ -1,6 +1,6 @@
 from config.settings import Settings
 from pymongo import MongoClient, collection as pycol, results, typings
-from typing import Mapping, Iterable, Any
+from typing import Mapping, Iterable, Any, Union, Optional
 from bson.objectid import ObjectId
 
 from pymongo.errors import PyMongoError
@@ -30,6 +30,18 @@ class BaseManager:
         obj = col.find_one({ "_id": ObjectId(id) })
         if obj is None:
             raise PyMongoError(f"No user found with id {id}")
+        return obj
+
+    @classmethod
+    def find(cls, filter: Mapping[str, Any], limit: int = 1) -> Optional[Mapping[str, Any]]:
+        col = cls.get_collection()
+        obj = col.find(filter, limit=limit)
+        return obj
+
+    @classmethod
+    def find_one(cls, filter: Mapping[str, Any]) -> Optional[Mapping[str, Any]]:
+        col = cls.get_collection()
+        obj = col.find_one(filter=filter)
         return obj
 
     @classmethod
