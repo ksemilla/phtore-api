@@ -1,4 +1,6 @@
 import strawberry
+from strawberry.types import Info
+from strawberry.permission import BasePermission
 
 from database.users import UserManager
 
@@ -7,13 +9,18 @@ from schema.core import InsertOneResult
 from typing import List
 import bcrypt
 
+from permissions.auth import (
+    IsAuthenticated,
+)
+
 @strawberry.field
 def user(id: str) -> User:
     obj = UserManager.find_by_id(id)
     return User(**obj)
 
-@strawberry.field
-def users(self) -> List[User]:
+@strawberry.field(permission_classes=[IsAuthenticated])
+def users(info: Info) -> List[User]:
+    print("resolver", info.context['request']['user'])
     query = UserManager.list()
     return [User(**obj) for obj in query]
 
@@ -23,7 +30,7 @@ def delete_user(self, id: str) -> User:
     return User(**obj)
 
 @strawberry.field
-def update_user(self, id: str, data: UserUpdate) -> User:
+def update_user(info: Info , id: str, data: UserUpdate) -> User:
     obj = UserManager.update(id, data)
     return User(**obj)
 

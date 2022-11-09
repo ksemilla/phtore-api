@@ -1,5 +1,6 @@
 import strawberry
 import jwt
+import datetime
 
 from schema.auth import Login, LoginResult
 from schema.users import User
@@ -11,7 +12,11 @@ def login(data: Login) -> LoginResult:
     user = UserManager.find_one({"email": data.email})
 
     if user:
-        encoded_jwt = jwt.encode({'user_id': str(user["_id"])}, Settings.APP_KEY)
+        encoded_jwt = jwt.encode({
+            'user_id': str(user["_id"]),
+            "exp": datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(days=30)
+            },
+            Settings.APP_KEY)
         return LoginResult(token=encoded_jwt, user=User(**user))
 
     return LoginResult(token="", user=None)
