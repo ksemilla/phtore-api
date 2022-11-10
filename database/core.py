@@ -59,7 +59,13 @@ class BaseManager:
     @classmethod
     def update(cls, id: str, document: Mapping[str, Any]) -> results.UpdateResult:
         col = cls.get_collection()
-        res = col.find_one_and_update({ "_id": ObjectId(id) }, { "$set":  document._dict()})
+        res = col.find_one_and_update({ "_id": ObjectId(id) }, { "$set":  document})
+        return res
+
+    @classmethod
+    def update_many(cls, filter: Mapping[str, Any], document: Mapping[str, Any]) -> results.UpdateResult:
+        col = cls.get_collection()
+        res = col.update_many(filter, { "$set": document })
         return res
 
     @classmethod

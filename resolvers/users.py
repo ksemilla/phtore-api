@@ -18,20 +18,19 @@ def user(id: str) -> User:
     obj = UserManager.find_by_id(id)
     return User(**obj)
 
-@strawberry.field(permission_classes=[IsAuthenticated])
-def users(info: Info) -> List[User]:
-    print("resolver", info.context['request']['user'])
+@strawberry.field
+def users() -> List[User]:
     query = UserManager.list()
     return [User(**obj) for obj in query]
 
 @strawberry.field
-def delete_user(self, id: str) -> User:
+def delete_user(id: str) -> User:
     obj = UserManager.delete(id)
     return User(**obj)
 
 @strawberry.field
-def update_user(info: Info , id: str, data: UserUpdate) -> User:
-    obj = UserManager.update(id, data)
+def update_user(id: str, data: UserUpdate) -> User:
+    obj = UserManager.update(id, data._dict())
     return User(**obj)
 
 @strawberry.field

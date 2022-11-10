@@ -1,7 +1,4 @@
-from starlette.authentication import AuthenticationBackend, AuthenticationError, AuthCredentials, SimpleUser
-from fastapi.middleware import Middleware
-from exceptions.auth import InvalidAuth
-import json
+from starlette.authentication import AuthenticationBackend, AuthCredentials, SimpleUser
 from config.settings import Settings
 from typing import Optional
 import jwt

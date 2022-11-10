@@ -3,19 +3,32 @@ import strawberry
 from fastapi import FastAPI
 from strawberry.fastapi import GraphQLRouter
 
-from resolvers.core import Query
+from resolvers.core import Query, Mutation
 from middlewares.authentication import BasicAuthBackend
 from fastapi.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
-schema = strawberry.Schema(Query)
+from fastapi.middleware.cors import CORSMiddleware
+
+schema = strawberry.Schema(query=Query, mutation=Mutation)
 
 graphql_app = GraphQLRouter(
     schema,
 )
 
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:5173",
+]
+
 middleware = [
-    Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
+    Middleware(CORSMiddleware, allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],),
+    Middleware(AuthenticationMiddleware, backend=BasicAuthBackend()),
 ]
 
 app = FastAPI(middleware=middleware)

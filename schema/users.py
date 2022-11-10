@@ -1,5 +1,6 @@
 import strawberry
 from typing import Optional
+from enum import Enum
 
 @strawberry.type
 class User:
@@ -8,6 +9,7 @@ class User:
     password: strawberry.Private[str]
 
     name: Optional[str]
+    role: 'Roles'
 
     @strawberry.field
     def id(self) -> str:
@@ -30,3 +32,8 @@ class UserCreate(BaseSchema):
     email: str
     name: Optional[str] = strawberry.UNSET
     password: str
+
+@strawberry.enum
+class Roles(Enum):
+    ADMIN = "admin"
+    USER = "user"

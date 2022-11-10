@@ -4,7 +4,7 @@ from typing import Optional
 from .users import User
 
 @strawberry.input
-class Login:
+class LoginInput:
     email: str
     password: str
 

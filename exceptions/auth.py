@@ -7,3 +7,6 @@ class InvalidAuth(AuthenticationError):
         self.payload = payload # you could add more args
     def __str__(self):
         return str(self.message)
+
+class WrongPassword(Exception):
+    pass
