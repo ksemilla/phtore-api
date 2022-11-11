@@ -11,7 +11,8 @@ from .users import (
 )
 
 from .auth import (
-    login
+    login,
+    verify_token,
 )
 
 Query = create_type(
@@ -20,11 +21,7 @@ Query = create_type(
         user,
         users,
         update_user,
-        create_user,
         delete_user,
-
-        login,
-
         run_script,
     ]
 )
@@ -33,5 +30,7 @@ Mutation = create_type(
     'Mutation',
     [
         login,
+        verify_token,
+        create_user,
     ]
 )

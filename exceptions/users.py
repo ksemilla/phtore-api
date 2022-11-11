@@ -1,2 +1,0 @@
-class NoUserFound(Exception):
-    pass

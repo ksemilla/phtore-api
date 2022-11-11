@@ -12,3 +12,8 @@ class LoginInput:
 class LoginResult:
     token: str
     user: Optional[User]
+
+@strawberry.type
+class VerifyResult:
+    acknowledge: bool
+    user: Optional[User]
