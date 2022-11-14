@@ -1,5 +1,5 @@
 import strawberry
-from typing import List
+from typing import List, Optional
 import bcrypt
 import jwt
 import datetime
@@ -7,8 +7,8 @@ from graphql import GraphQLError
 
 from config.settings import Settings
 from database.users import UserManager
-from schema.users import User, UserUpdate, UserCreate, UserCreateResult
-from schema.core import InsertOneResult
+from schema.users import User, UserUpdate, UserCreate, UserCreateResult, UserFilterOptions, UserList
+from schema.core import PageQuery
 from permissions.auth import (
     IsAuthenticated,
 )
@@ -19,9 +19,13 @@ def user(id: str) -> User:
     return User(**obj)
 
 @strawberry.field
-def users() -> List[User]:
-    query = UserManager.list()
-    return [User(**obj) for obj in query]
+def users(filter: UserFilterOptions, limit: int = 20, skip: int = 0) -> UserList:
+    cursor = UserManager.list(filter={'email': { "$regex": filter.email }}, limit=limit, skip=skip)
+    total_count = UserManager.get_collection().count_documents({'email': { "$regex": filter.email }})
+    return UserList(
+        list=[User(**obj) for obj in cursor],
+        total_count=total_count
+    )
 
 @strawberry.field
 def delete_user(id: str) -> User:
@@ -30,7 +34,7 @@ def delete_user(id: str) -> User:
 
 @strawberry.field
 def update_user(id: str, data: UserUpdate) -> User:
-    obj = UserManager.update(id, data._dict())
+    obj = UserManager.update(id, data._clean_dict())
     return User(**obj)
 
 @strawberry.field

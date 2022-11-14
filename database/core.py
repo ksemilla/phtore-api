@@ -1,6 +1,6 @@
 from config.settings import Settings
-from pymongo import MongoClient, collection as pycol, results, typings
-from typing import Mapping, Iterable, Any, Union, Optional
+from pymongo import MongoClient, collection as pycol, results, typings, CursorType
+from typing import Mapping, Iterable, Any, Optional
 from bson.objectid import ObjectId
 
 from pymongo.errors import PyMongoError
@@ -20,9 +20,12 @@ class BaseManager:
 
 
     @classmethod
-    def list(cls) -> Mapping[str, Any]:
+    def list(cls, **kwargs) -> CursorType:
+        filter_arg = kwargs.get('filter', {})
+        limit = kwargs.get('limit', 20)
+        skip = kwargs.get('skip', 0)
         col = cls.get_collection()
-        return col.find()
+        return col.find(filter=filter_arg, limit=limit, skip=skip)
 
     @classmethod
     def find_by_id(cls, id: str) -> Mapping[str, Any]:
@@ -58,8 +61,10 @@ class BaseManager:
 
     @classmethod
     def update(cls, id: str, document: Mapping[str, Any]) -> results.UpdateResult:
+        print("doc", document)
         col = cls.get_collection()
         res = col.find_one_and_update({ "_id": ObjectId(id) }, { "$set":  document})
+        print("res", res)
         return res
 
     @classmethod
@@ -73,3 +78,9 @@ class BaseManager:
         col = cls.get_collection()
         res = col.find_one_and_delete({ "_id" : ObjectId(id)})
         return res
+
+    @classmethod
+    def create_index(cls):
+        col = cls.get_collection()
+        col.create_index([('email', 'text')])
+        return

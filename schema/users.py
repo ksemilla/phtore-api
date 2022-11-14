@@ -1,27 +1,28 @@
 import strawberry
-from typing import Optional
+from typing import Optional, List
 from enum import Enum
 import datetime
 
 from .core import BaseSchema, InsertOneResult
+
+@strawberry.enum
+class Roles(Enum):
+    ADMIN = "admin"
+    USER = "user"
 
 @strawberry.type
 class User:
     _id: strawberry.Private[str]
     email: str
     password: strawberry.Private[str]
+    name: Optional[str] = ""
 
-    name: Optional[str] = strawberry.UNSET
-    role: Optional['Roles'] = strawberry.UNSET
+    role: Optional['Roles'] = Roles.USER
+    locked: bool = False
 
     @strawberry.field
     def id(self) -> str:
         return str(self._id)
-
-@strawberry.input
-class UserCreate:
-    email: str
-    password: str
 
 @strawberry.type
 class UserCreateResult(InsertOneResult):
@@ -29,22 +30,26 @@ class UserCreateResult(InsertOneResult):
 
 @strawberry.input
 class UserUpdate(BaseSchema):
-    email: Optional[str] = strawberry.UNSET
-    name: Optional[str] = strawberry.UNSET
+    email: Optional[str] = ""
+    name: Optional[str] = ""
 
 @strawberry.input
 class UserCreate(BaseSchema):
     email: str
-    # name: Optional[str]
     password: str
-
-@strawberry.enum
-class Roles(Enum):
-    ADMIN = "admin"
-    USER = "user"
 
 class TimeStampedSchema:
     created_at: datetime.datetime
     created_by: 'User'
     updated_at: datetime.datetime
     updated_by: 'User'
+
+@strawberry.input
+class UserFilterOptions(BaseSchema):
+    email: Optional[str] = ""
+    name: Optional[str] = ""
+
+@strawberry.type
+class UserList:
+    list: List[User]
+    total_count: int

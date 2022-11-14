@@ -20,7 +20,6 @@ Query = create_type(
     [
         user,
         users,
-        update_user,
         delete_user,
         run_script,
     ]
@@ -31,6 +30,8 @@ Mutation = create_type(
     [
         login,
         verify_token,
+
         create_user,
+        update_user,
     ]
 )
