@@ -16,9 +16,11 @@ class User:
     email: str
     password: strawberry.Private[str]
     name: Optional[str] = ""
-
-    role: Optional['Roles'] = Roles.USER
+    role: Optional['Roles'] = Roles.USER.value
     locked: bool = False
+    phone: Optional[str] = ""
+    mobile: Optional[str] = ""
+    date_of_birth: Optional[str] = ""
 
     @strawberry.field
     def id(self) -> str:
@@ -32,6 +34,11 @@ class UserCreateResult(InsertOneResult):
 class UserUpdate(BaseSchema):
     email: Optional[str] = ""
     name: Optional[str] = ""
+    role: Optional['Roles'] = Roles.USER.value
+    locked: bool = False
+    phone: Optional[str] = ""
+    mobile: Optional[str] = ""
+    date_of_birth: Optional[str] = ""
 
 @strawberry.input
 class UserCreate(BaseSchema):
