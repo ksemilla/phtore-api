@@ -20,7 +20,8 @@ def user(id: str) -> User:
     obj = UserManager.find_by_id(id)
     return User(**obj)
 
-@strawberry.field(permission_classes=[IsAuthenticated, IsAdmin])
+# @strawberry.field(permission_classes=[IsAuthenticated, IsAdmin])
+@strawberry.field
 def users(filter: UserFilterOptions, limit: int = 20, skip: int = 0) -> UserList:
     cursor = UserManager.list(filter={'email': { "$regex": filter.email }}, limit=limit, skip=skip)
     total_count = UserManager.get_collection().count_documents({'email': { "$regex": filter.email }})

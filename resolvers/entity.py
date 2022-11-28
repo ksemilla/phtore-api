@@ -1,0 +1,51 @@
+import strawberry
+from strawberry.types import Info
+from typing import Union
+from database.entity import EntityManager
+from schema.entity import Entity, EntityCreateInput, EntityFilterOptions, EntityList
+from schema.core import InsertOneResult
+from schema.entity import Entity
+from starlette.requests import Request
+from starlette.websockets import WebSocket
+
+@strawberry.field
+def find_entity_by_slug(slug: str) -> Entity:
+    obj = EntityManager.get_entity_by_slug(slug)
+    if obj:
+        return Entity(**obj)
+    return ""
+
+@strawberry.field
+def create_entity(info: Info, input: EntityCreateInput) -> InsertOneResult:
+    request: Union[Request, WebSocket] = info.context["request"]
+    data = input._clean_dict()
+    data['owner'] = request.user.id
+    data['slug'] = data['name'].lower().replace(" ","-")
+    obj = EntityManager.insert(data)
+    return InsertOneResult(**obj)
+
+@strawberry.field
+def entities(filter: EntityFilterOptions, limit: int = 20, skip: int = 0) -> EntityList:
+    cursor = EntityManager.list(filter={'name': { "$regex": filter.name }}, limit=limit, skip=skip)
+    total_count = EntityManager.get_collection().count_documents({'name': { "$regex": filter.name }})
+
+    return EntityList(
+        list=[Entity(**obj) for obj in cursor],
+        total_count=total_count
+    )
+
+@strawberry.field
+def my_entities(info: Info, limit: int = 20, skip: int = 0) -> EntityList:
+    request: Union[Request, WebSocket] = info.context["request"]
+    cursor = EntityManager.list(filter={"owner": request.user.id}, limit=limit, skip=skip)
+    total_count = EntityManager.get_collection().count_documents({"owner": request.user.id})
+
+    return EntityList(
+        list=[Entity(**obj) for obj in cursor],
+        total_count=total_count
+    )
+
+@strawberry.field
+def entity(slug: str) -> Entity:
+    obj = EntityManager.find_one({"slug": slug})
+    return Entity(**obj)

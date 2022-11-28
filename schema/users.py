@@ -34,7 +34,6 @@ class UserCreateResult(InsertOneResult):
 class UserUpdate(BaseSchema):
     email: Optional[str] = ""
     name: Optional[str] = ""
-    role: Optional['Roles'] = Roles.USER.value
     locked: bool = False
     phone: Optional[str] = ""
     mobile: Optional[str] = ""

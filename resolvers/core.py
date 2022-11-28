@@ -10,6 +10,14 @@ from .users import (
     delete_user
 )
 
+from .entity import (
+    find_entity_by_slug,
+    create_entity,
+    entities,
+    my_entities,
+    entity,
+)
+
 from .auth import (
     login,
     verify_token,
@@ -21,6 +29,12 @@ Query = create_type(
         user,
         users,
         delete_user,
+
+        find_entity_by_slug,
+        entities,
+        my_entities,
+        entity,
+
         run_script,
     ]
 )
@@ -33,5 +47,7 @@ Mutation = create_type(
 
         create_user,
         update_user,
+
+        create_entity,
     ]
 )

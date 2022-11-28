@@ -78,7 +78,7 @@ class BaseManager:
         return res
 
     @classmethod
-    def create_index(cls):
+    def delete_many(cls) -> None:
         col = cls.get_collection()
-        col.create_index([('email', 'text')])
+        col.delete_many({})
         return

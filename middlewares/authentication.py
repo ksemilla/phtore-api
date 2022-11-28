@@ -3,14 +3,18 @@ from config.settings import Settings
 from typing import Optional
 import jwt
 from database.users import UserManager
+from typing import Dict, Any, TypedDict, Optional, Mapping
 
 class User(SimpleUser):
+    identity= None
     def __init__(self, username, email="", role="", id="", **kwargs):
         super().__init__(username)
         self.id = id
         self.email = email
         self.role = role
-        
+
+        for k,v in kwargs.items():
+            self.__dict__[k] = v
 
 class BasicAuthBackend(AuthenticationBackend):
     async def authenticate(self, request):
@@ -29,11 +33,13 @@ class BasicAuthBackend(AuthenticationBackend):
         except jwt.InvalidSignatureError:
             return
         except Exception:
+            print("got here")
             return
 
         user = UserManager.find_by_id(decoded['user_id'])
-        
-        return AuthCredentials(["authenticated"]), User(username=user['email'], id=str(user['_id']), **user)
+    
+
+        return AuthCredentials(["authenticated"]), User(username=user['email'], id=str(user['_id']),**user)
 
     def get_header(self, request):
         header: str = request.headers["Authorization"]
