@@ -9,6 +9,7 @@ from fastapi.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 schema = strawberry.Schema(query=Query, mutation=Mutation)
 
@@ -31,3 +32,4 @@ middleware = [
 
 app = FastAPI(middleware=middleware)
 app.include_router(graphql_app, prefix="/graphql")
+app.mount("/media", StaticFiles(directory="media"), name="media")

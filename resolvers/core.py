@@ -16,11 +16,17 @@ from .entity import (
     entities,
     my_entities,
     entity,
+    remove_banner,
 )
 
 from .auth import (
     login,
     verify_token,
+)
+
+from .datafeed import (
+    upload,
+    datafeed,
 )
 
 Query = create_type(
@@ -34,6 +40,8 @@ Query = create_type(
         entities,
         my_entities,
         entity,
+
+        datafeed,
 
         run_script,
     ]
@@ -49,5 +57,8 @@ Mutation = create_type(
         update_user,
 
         create_entity,
+        remove_banner,
+
+        upload,
     ]
 )

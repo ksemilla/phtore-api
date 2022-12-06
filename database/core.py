@@ -32,7 +32,7 @@ class BaseManager:
         col = cls.get_collection()
         obj = col.find_one({ "_id": ObjectId(id) })
         if obj is None:
-            raise PyMongoError(f"No user found with id {id}")
+            raise PyMongoError(f"No {cls.resource} found with id {id}")
         return obj
 
     @classmethod

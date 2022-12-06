@@ -1,4 +1,10 @@
 import os
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent
+MEDIA_FILES_DIR = str(ROOT_DIR) + "/media"
+
+MEDIA_FILES_URI = "http://localhost:8000/media/"
 
 class Settings:
     ALLOWED_AUTHORIZATION_PREFIX = ('Bearer',)

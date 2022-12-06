@@ -1,5 +1,4 @@
 import strawberry
-from typing import List, Optional
 import bcrypt
 import jwt
 import datetime

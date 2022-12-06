@@ -1,7 +1,7 @@
 import strawberry
 from strawberry.types import Info
 from typing import Union
-from database.entity import EntityManager
+from database.entity import EntityManager, MemberManager
 from schema.entity import Entity, EntityCreateInput, EntityFilterOptions, EntityList
 from schema.core import InsertOneResult
 from schema.entity import Entity
@@ -26,8 +26,8 @@ def create_entity(info: Info, input: EntityCreateInput) -> InsertOneResult:
 
 @strawberry.field
 def entities(filter: EntityFilterOptions, limit: int = 20, skip: int = 0) -> EntityList:
-    cursor = EntityManager.list(filter={'name': { "$regex": filter.name }}, limit=limit, skip=skip)
-    total_count = EntityManager.get_collection().count_documents({'name': { "$regex": filter.name }})
+    cursor = EntityManager.list(filter={'name': { "$regex": filter.name.lower(), '$options': 'i' }}, limit=limit, skip=skip)
+    total_count = EntityManager.get_collection().count_documents({'name': { "$regex": filter.name.lower() }})
 
     return EntityList(
         list=[Entity(**obj) for obj in cursor],
@@ -40,6 +40,8 @@ def my_entities(info: Info, limit: int = 20, skip: int = 0) -> EntityList:
     cursor = EntityManager.list(filter={"owner": request.user.id}, limit=limit, skip=skip)
     total_count = EntityManager.get_collection().count_documents({"owner": request.user.id})
 
+    
+
     return EntityList(
         list=[Entity(**obj) for obj in cursor],
         total_count=total_count
@@ -49,3 +51,8 @@ def my_entities(info: Info, limit: int = 20, skip: int = 0) -> EntityList:
 def entity(slug: str) -> Entity:
     obj = EntityManager.find_one({"slug": slug})
     return Entity(**obj)
+
+@strawberry.field
+def remove_banner(slug: str) -> bool:
+    EntityManager.update_many({"slug": slug}, {"banner": ""})
+    return True
