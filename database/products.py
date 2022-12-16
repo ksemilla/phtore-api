@@ -1,7 +1,4 @@
 from .core import BaseManager
 
-class Product(BaseManager):
+class ProductManager(BaseManager):
     resource: str = "products"
-
-class Price(BaseManager):
-    resource: str = "prices"

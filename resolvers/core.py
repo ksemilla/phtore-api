@@ -19,6 +19,13 @@ from .entity import (
     remove_banner,
 )
 
+from .products import (
+    create_product,
+    products,
+    product,
+    update_product,
+)
+
 from .auth import (
     login,
     verify_token,
@@ -41,6 +48,9 @@ Query = create_type(
         my_entities,
         entity,
 
+        products,
+        product,
+
         datafeed,
 
         run_script,
@@ -58,6 +68,9 @@ Mutation = create_type(
 
         create_entity,
         remove_banner,
+
+        create_product,
+        update_product,
 
         upload,
     ]
