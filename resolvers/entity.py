@@ -7,6 +7,7 @@ from schema.core import InsertOneResult
 from schema.entity import Entity
 from starlette.requests import Request
 from starlette.websockets import WebSocket
+from typing import List
 
 @strawberry.field
 def find_entity_by_slug(slug: str) -> Entity:
@@ -35,17 +36,10 @@ def entities(filter: EntityFilterOptions, limit: int = 20, skip: int = 0) -> Ent
     )
 
 @strawberry.field
-def my_entities(info: Info, limit: int = 20, skip: int = 0) -> EntityList:
+def my_entities(info: Info, limit: int = 20, skip: int = 0) -> List[Entity]:
     request: Union[Request, WebSocket] = info.context["request"]
-    cursor = EntityManager.list(filter={"owner": request.user.id}, limit=limit, skip=skip)
-    total_count = EntityManager.get_collection().count_documents({"owner": request.user.id})
-
-    
-
-    return EntityList(
-        list=[Entity(**obj) for obj in cursor],
-        total_count=total_count
-    )
+    cursor = EntityManager.list(filter={"owner": request.user.id})
+    return [Entity(**obj) for obj in cursor]
 
 @strawberry.field
 def entity(slug: str) -> Entity:
