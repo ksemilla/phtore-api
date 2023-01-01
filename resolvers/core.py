@@ -24,6 +24,12 @@ from .products import (
     products,
     product,
     update_product,
+    find_products_by_name,
+
+    create_item,
+    items,
+    item,
+    update_item,
 )
 
 from .auth import (
@@ -50,6 +56,10 @@ Query = create_type(
 
         products,
         product,
+        find_products_by_name,
+        items,
+        item,
+        
 
         datafeed,
 
@@ -71,6 +81,8 @@ Mutation = create_type(
 
         create_product,
         update_product,
+        create_item,
+        update_item,
 
         upload,
     ]

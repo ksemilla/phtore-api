@@ -5,6 +5,7 @@ from typing import Optional, List
 from schema.users import TimeStampedSchema, BaseSchema, User
 from schema.datafeed import Datafeed
 from database.datafeed import DatafeedManager
+from strawberry.scalars import JSON
 
 @strawberry.enum
 class ProductType(Enum):
@@ -60,8 +61,85 @@ class ProductEditInput(BaseSchema):
 @strawberry.input
 class ProductFilterOptions(BaseSchema):
     entity: Optional[str] = ""
+    name: Optional[str] = strawberry.UNSET
 
 @strawberry.type
 class ProductList:
     list: List[Product]
     total_count: int
+
+@strawberry.type
+class ItemCategoryChoice:
+    name: str
+
+@strawberry.type
+class ItemCategory:
+    name: str
+    choices: List[ItemCategoryChoice]
+
+@strawberry.type
+class InstanceAttribute:
+    name: str
+    value: str
+
+@strawberry.type
+class ProductReference:
+    name: str
+    id: str
+    photo_data: Datafeed
+
+@strawberry.type
+class ItemInstance:
+    attributes: List[InstanceAttribute]
+    product: ProductReference
+
+@strawberry.type
+class Item:
+    _id: strawberry.Private[str]
+    entity: str
+    name: str
+    description: str
+    categories: List[ItemCategory]
+    instances: List[ItemInstance]
+    photo: str = ""
+
+    @strawberry.field
+    def id(self) -> str:
+        return str(self._id)
+
+    @strawberry.field
+    def photo_data(self) -> Datafeed:
+        if self.photo:
+            datafeed = DatafeedManager.find_by_id(self.photo)
+            return Datafeed(**datafeed)
+        return Datafeed(_id="", url="", model="", field="", object_id="")
+
+@strawberry.input
+class ItemCreateInput(BaseSchema):
+    entity: str
+    name: str
+    description: str
+    categories: JSON
+    instances: JSON
+
+@strawberry.input
+class ItemFilterOptions(BaseSchema):
+    entity: Optional[str] = ""
+    name: Optional[str] = strawberry.UNSET
+
+@strawberry.type
+class ItemList:
+    list: List[Item]
+    total_count: int
+
+@strawberry.input
+class ItemEditInput(BaseSchema):
+    name: Optional[str] = strawberry.UNSET
+    description: Optional[str] = strawberry.UNSET
+    categories: Optional[JSON] = strawberry.UNSET
+    instances: Optional[JSON] = strawberry.UNSET
+
+@strawberry.type
+class GroupItem:
+    entity: str
+    name: str

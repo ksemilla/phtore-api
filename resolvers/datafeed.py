@@ -4,7 +4,7 @@ from config.settings import MEDIA_FILES_DIR, MEDIA_FILES_URI
 from schema.datafeed import DatafeedInput, Models, DatafeedList, Datafeed
 from database.entity import EntityManager
 from database.datafeed import DatafeedManager
-from database.products import ProductManager
+from database.products import ProductManager, ItemManager
 
 from graphql import GraphQLError
 
@@ -14,6 +14,8 @@ def model_to_manager(argument: Models):
             return EntityManager
         case Models.PRODUCT:
             return ProductManager
+        case Models.ITEM:
+            return ProductManager
         case _:
             return GraphQLError("Invalid model")
 
@@ -22,8 +24,6 @@ async def upload(input: DatafeedInput) -> bool:
     model = model_to_manager(input.model)
     
     obj = model.find_by_id(input.object_id)
-
-    _type, sub_type =  input.file.content_type.split("/")
 
     data = {
         "url": MEDIA_FILES_URI + input.object_id + f"-{input.field}",
@@ -37,7 +37,7 @@ async def upload(input: DatafeedInput) -> bool:
     dir_path = str(MEDIA_FILES_DIR) +"/" + input.object_id + f"-{input.field}"
     content = await input.file.read()
 
-    if input.field in obj and  obj[input.field]:
+    if input.field in obj and obj[input.field]:
         DatafeedManager.update(obj[input.field], data)
     else:
         res = DatafeedManager.insert(data)
@@ -45,6 +45,7 @@ async def upload(input: DatafeedInput) -> bool:
     
     with open(dir_path, "wb") as f:
         f.write(content)
+
     return True
 
 @strawberry.field

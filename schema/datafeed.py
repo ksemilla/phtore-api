@@ -9,6 +9,7 @@ from typing import Optional, List
 class Models(Enum):
     ENTITY = "entity"
     PRODUCT = "product"
+    ITEM = 'item'
 
 @strawberry.type
 class Datafeed(BaseSchema):
