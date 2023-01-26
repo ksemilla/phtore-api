@@ -21,3 +21,6 @@ class EntityManager(BaseManager):
 
 class MemberManager(BaseManager):
     resource = "members"
+
+class DeliveryMethodManager(BaseManager):
+    resource = "delivery_methods"

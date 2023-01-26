@@ -36,6 +36,7 @@ def delete_user(id: str) -> User:
 
 @strawberry.field(permission_classes=[IsAuthenticated, IsAdminOrSelf])
 def update_user(id: str, data: UserUpdate) -> User:
+    print(data)
     obj = UserManager.update(id, data._clean_dict())
     return User(**obj)
 

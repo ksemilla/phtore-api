@@ -62,3 +62,35 @@ class Member(TimeStampedSchema, BaseSchema):
     @strawberry.field
     def id(self) -> str:
         return str(self._id)
+
+@strawberry.type
+class DeliveryMethod(BaseSchema):
+    _id: strawberry.Private[str]
+    entity: str
+    name: str
+    description: str
+    sell_price: float
+    list_price: float
+    score: int
+
+    @strawberry.field
+    def id(self) -> str:
+        return str(self._id)
+
+@strawberry.input
+class DeliveryMethodCreateInput(BaseSchema):
+    entity: str
+    name: str
+    description: str
+    sell_price: float
+    list_price: float
+    score: int
+
+@strawberry.input
+class DeliveryMethodFilterOptions(BaseSchema):
+    entity: Optional[str] = ""
+
+@strawberry.type
+class DeliveryMethodList:
+    list: List[DeliveryMethod]
+    total_count: int

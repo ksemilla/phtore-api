@@ -1,13 +1,14 @@
 import strawberry
 from strawberry.types import Info
 from typing import Union
-from database.entity import EntityManager, MemberManager
-from schema.entity import Entity, EntityCreateInput, EntityFilterOptions, EntityList
+from database.entity import EntityManager, MemberManager, DeliveryMethodManager
+from schema.entity import Entity, EntityCreateInput, EntityFilterOptions, EntityList, DeliveryMethodCreateInput, DeliveryMethodFilterOptions, DeliveryMethodList, DeliveryMethod
 from schema.core import InsertOneResult
 from schema.entity import Entity
 from starlette.requests import Request
 from starlette.websockets import WebSocket
 from typing import List
+import pymongo
 
 @strawberry.field
 def find_entity_by_slug(slug: str) -> Entity:
@@ -50,3 +51,18 @@ def entity(slug: str) -> Entity:
 def remove_banner(slug: str) -> bool:
     EntityManager.update_many({"slug": slug}, {"banner": ""})
     return True
+
+@strawberry.field
+def create_delivery_method(input: DeliveryMethodCreateInput) -> InsertOneResult:
+    obj = DeliveryMethodManager.insert(input._dict())
+    return InsertOneResult(**obj)
+
+@strawberry.field
+def delivery_methods(filter: DeliveryMethodFilterOptions, limit: int = 20, skip: int = 0) -> DeliveryMethodList:
+    cursor = DeliveryMethodManager.list(filter={"entity": filter.entity } if filter.entity else {}, limit=limit, skip=skip).sort('score', pymongo.ASCENDING)
+    total_count = DeliveryMethodManager.get_collection().count_documents({"entity": filter.entity})
+
+    return DeliveryMethodList(
+        list=[DeliveryMethod(**obj) for obj in cursor],
+        total_count=total_count
+    )

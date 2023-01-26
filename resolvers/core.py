@@ -17,6 +17,9 @@ from .entity import (
     my_entities,
     entity,
     remove_banner,
+
+    create_delivery_method,
+    delivery_methods,
 )
 
 from .products import (
@@ -30,6 +33,12 @@ from .products import (
     items,
     item,
     update_item,
+)
+
+from .orders import (
+    create_order,
+
+    orders,
 )
 
 from .auth import (
@@ -53,6 +62,7 @@ Query = create_type(
         entities,
         my_entities,
         entity,
+        delivery_methods,
 
         products,
         product,
@@ -60,6 +70,7 @@ Query = create_type(
         items,
         item,
         
+        orders,
 
         datafeed,
 
@@ -78,11 +89,14 @@ Mutation = create_type(
 
         create_entity,
         remove_banner,
+        create_delivery_method,
 
         create_product,
         update_product,
         create_item,
         update_item,
+
+        create_order,
 
         upload,
     ]

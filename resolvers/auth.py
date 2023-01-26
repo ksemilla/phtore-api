@@ -38,5 +38,4 @@ def verify_token(token: str) -> VerifyResult:
         return GraphQLError(message="Invalid token")
     except Exception:
         return GraphQLError(message="Cannot decode token")
-    
     return VerifyResult(acknowledge=True, user=User(**user))
