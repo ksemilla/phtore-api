@@ -39,6 +39,7 @@ from .orders import (
     create_order,
 
     orders,
+    order,
 )
 
 from .auth import (
@@ -71,6 +72,7 @@ Query = create_type(
         item,
         
         orders,
+        order,
 
         datafeed,
 

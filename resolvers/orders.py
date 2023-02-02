@@ -23,7 +23,6 @@ def create_order(info: Info, input: OrderCreateInput) -> InsertOneResult:
     # request: Union[Request, WebSocket] = info.context["request"]
     data = input._dict()
     data["status"] = OrderStatus.PENDING.value
-    print(data)
     order_items = []
     for order_item in data['order_items']:
         order_items.append({
@@ -49,3 +48,9 @@ def orders(filter: OrderFilterOptions, limit: int = 20, skip: int = 0) -> OrderL
         list=order_list,
         total_count=total_count
     )
+
+@strawberry.field
+def order(id: str) -> Order:
+    obj = OrderManager.find_by_id(id)
+    order_items = obj.pop("order_items")
+    return Order(**obj, order_items=[OrderItem(**item) for item in order_items])
